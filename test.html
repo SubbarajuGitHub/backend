@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Tracking Test</title>
+</head>
+<body>
+  <h2>Track Event</h2>
+  <form id="trackForm">
+    <label>Website ID:</label><br />
+    <input type="text" name="websiteId" value="123e4567-e89b-12d3-a456-426614174000" required /><br /><br />
+
+    <label>Domain:</label><br />
+    <input type="text" name="domain" value="example.com" required /><br /><br />
+
+    <label>Page View:</label><br />
+    <select name="pageView">
+      <option value="true">True</option>
+      <option value="false">False</option>
+    </select><br /><br />
+
+    <label>UTM Source:</label><br />
+    <input type="text" name="utmSource" /><br /><br />
+
+    <label>UTM Medium:</label><br />
+    <input type="text" name="utmMedium" /><br /><br />
+
+    <label>Bounce Rate:</label><br />
+    <input type="text" name="bounceRate" /><br /><br />
+
+    <label>First Page:</label><br />
+    <input type="text" name="firstPage" /><br /><br />
+
+    <label>Last Page:</label><br />
+    <input type="text" name="lastPage" /><br /><br />
+
+    <button type="submit">Send Event</button>
+  </form>
+
+  <p id="response"></p>
+
+  <script>
+    const form = document.getElementById('trackForm');
+    const responseText = document.getElementById('response');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(form);
+      const data = {};
+
+      for (let [key, value] of formData.entries()) {
+        if (value === 'true' || value === 'false') {
+          data[key] = value === 'true';
+        } else {
+          data[key] = value;
+        }
+      }
+
+      const res = await fetch('http://localhost:3000/track/event', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ events: data })
+      });
+
+      const json = await res.json();
+      responseText.innerText = 'Response: ' + JSON.stringify(json, null, 2);
+    });
+  </script>
+</body>
+</html>
