@@ -8,10 +8,9 @@ export async function receiveEvent  (req, res)  {
     return res.status(400).json({ error: error.details[0].message });
   }
 
-  const eventData = value.events;
-
-  const result = await getClientDetails(req)
-  console.log("result", result)
+  const clientInfo = await getClientDetails(req)
+  console.log("clientInfo", clientInfo)
+  console.log("scriptPayload", value)
   return res.status(200).json({
     message: 'Event received successfully',
     data: result,
