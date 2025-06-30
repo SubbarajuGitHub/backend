@@ -153,7 +153,7 @@ function isValidPublicIP(ip) {
 export async function getClientDetails(req) {
   const userAgent = req.headers["user-agent"] || "";
   const userIp = extractClientIp(req, req?.socket?.remoteAddress ?? null) || "";
-  const geoLocation = await extractClientGeoLocation("18.185.0.1");
+  const geoLocation = await extractClientGeoLocation(userIp);
 
   return {userAgent, userIp, geoLocation}
 }
