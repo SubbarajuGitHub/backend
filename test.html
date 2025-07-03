@@ -1,41 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Tracking Test</title>
-</head>
 <body>
   <h2>Track Event</h2>
-  <form id="trackForm">
-    <label>Website ID:</label><br />
-    <input type="text" name="websiteId" value="123e4567-e89b-12d3-a456-426614174000" required /><br /><br />
 
-    <label>Domain:</label><br />
-    <input type="text" name="domain" value="example.com" required /><br /><br />
+  <!-- Your original form remains unchanged -->
 
-    <label>Page View:</label><br />
-    <select name="pageView">
-      <option value="true">True</option>
-      <option value="false">False</option>
-    </select><br /><br />
-
-    <label>UTM Source:</label><br />
-    <input type="text" name="utmSource" /><br /><br />
-
-    <label>UTM Medium:</label><br />
-    <input type="text" name="utmMedium" /><br /><br />
-
-    <label>Bounce Rate:</label><br />
-    <input type="text" name="bounceRate" /><br /><br />
-
-    <label>First Page:</label><br />
-    <input type="text" name="firstPage" /><br /><br />
-
-    <label>Last Page:</label><br />
-    <input type="text" name="lastPage" /><br /><br />
-
-    <button type="submit">Send Event</button>
-  </form>
+  <button id="getVisitorsBtn">Get Visitors</button>
+  <h3 id="visitorCount">Unique Visitors: -</h3>
 
   <p id="response"></p>
 
@@ -47,6 +16,35 @@
       e.preventDefault();
       const formData = new FormData(form);
       const data = {};
+
+      const events = {
+        channel: "Paid Ads",
+        referrer: "https://www.facebook.com/",
+        utmParams: {
+          medium: "cpc",
+          source: "facebook",
+          campaign: "summer-sale",
+          content: "carousel-ad",
+          term: "discount-deals"
+        },
+        session: {
+          firstPage: "/home",
+          lastPage: "/checkout",
+          pageCount: 5
+        },
+        deviceDetails: {
+          os: "macOS",
+          deviceType: "Laptop",
+          resolution: "1440x900",
+          viewport: "1440x700",
+          browser: "Safari 17.1",
+          timezone: "America/New_York",
+          language: "en-US",
+          hardwareConcurrency: 8,
+          userAgent:
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 13_5_1) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15"
+        }
+      };
 
       for (let [key, value] of formData.entries()) {
         if (value === 'true' || value === 'false') {
@@ -61,12 +59,30 @@
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ events: data })
+        body: JSON.stringify({ events: JSON.stringify(events) })
       });
 
       const json = await res.json();
       responseText.innerText = 'Response: ' + JSON.stringify(json, null, 2);
     });
   </script>
+
+  <!-- ✅ Visitor Fetch Script and Button Handler -->
+  <script>
+    async function fetchVisitors() {
+      try {
+        const res = await fetch('http://localhost:3000/stats/event');
+        if (!res.ok) throw new Error('Failed to fetch visitors');
+
+        const data = await res.json();
+        console.log('Visitor data:', data);
+        document.getElementById('visitorCount').innerText = `Unique Visitors: ${data.unique_visitor_count}`;
+      } catch (err) {
+        console.error(err);
+        document.getElementById('visitorCount').innerText = 'Error fetching visitor data.';
+      }
+    }
+
+    document.getElementById('getVisitorsBtn').addEventListener('click', fetchVisitors);
+  </script>
 </body>
-</html>

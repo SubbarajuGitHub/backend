@@ -1,5 +1,6 @@
 import express from 'express';
 import trackingRoutes from './routes/tracking.js';
+import getStats from "./routes/stats.js";
 import cors from 'cors';
 
 const app = express();
@@ -12,6 +13,7 @@ app.use(cors({
 
 // Mount route
 app.use('/track', trackingRoutes);
+app.use("/stats", getStats )
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
